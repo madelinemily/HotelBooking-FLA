@@ -1,5 +1,8 @@
 package model;
 
+import state.AvailableState;
+import state.State;
+
 public class Room {
 	private String type;
 	private String name;
@@ -8,6 +11,7 @@ public class Room {
 	private double price;
 	private String paymentType;
 	private boolean available;
+	private State state;
 
 	public Room(String type, String name, String bedType, int maxOccupancy, double price, String paymentType) {
 		super();
@@ -17,6 +21,7 @@ public class Room {
 		this.maxOccupancy = maxOccupancy;
 		this.price = price;
 		this.paymentType = paymentType;
+		this.state = new AvailableState();
 	}
 	public String getType() {
 		return type;
@@ -60,6 +65,21 @@ public class Room {
 	public void setAvailable(boolean available) {
 		this.available = available;
 	}
+	public State getState() {
+		return state;
+	}
+	public void setState(State state) {
+		this.state = state;
+	}
+	public void bookRoom() {
+        state.book(this);
+    }
+    public void unlockRoom() {
+        state.unlock(this);
+    }
+    public void lockRoom() {
+        state.lock(this);
+    }
 
 
 }

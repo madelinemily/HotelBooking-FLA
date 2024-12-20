@@ -27,13 +27,14 @@ public class Booking {
         }
 
         bookings.add("Booking: User : " + user.getName() + ", Room : " + room.getType());
+        room.bookRoom();
         room.setAvailable(false);
         System.out.println("Booking successful for user: " + user.getName() + " in room: " + room.getType());
 
-        selectPaymentMethod(user, room.getPrice());
+        selectPaymentMethod(user, room.getPrice(), room);
     }
 
-    public void selectPaymentMethod(User user, double amount) {
+    public void selectPaymentMethod(User user, double amount, Room room) {
         if(!user.getRole().equals("Registrant")) {
            System.out.println("Payment failed. Only registrant can make payments");
            return;
@@ -65,6 +66,7 @@ public class Booking {
 
         payment.processPayment(amount);
         System.out.println("Payment successful for user: " + user.getName() + " with amount: " + amount);
+        room.lockRoom();
     }
 
     public void showBookings() {
