@@ -27,7 +27,7 @@ public class PaymentProxy implements Payment{
             System.out.println("Access denied. Only users with the role 'registrant' can process payments");
             return false;
         }
-    	
+
     	return true;
     }
 
@@ -38,11 +38,11 @@ public class PaymentProxy implements Payment{
             System.out.println("Applying 5% tax for cash");
         }
         else if(payment instanceof CreditCard) {
-            taxRate = 0.10; 
+            taxRate = 0.10;
             System.out.println("Applying 10% tax for credit card");
-        } 
+        }
         else{
-            taxRate = 0.0; 
+            taxRate = 0.0;
         }
         return amount + (amount * taxRate);
     }

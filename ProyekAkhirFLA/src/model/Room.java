@@ -7,6 +7,8 @@ public class Room {
 	private int maxOccupancy;
 	private double price;
 	private String paymentType;
+	private boolean available;
+
 	public Room(String type, String name, String bedType, int maxOccupancy, double price, String paymentType) {
 		super();
 		this.type = type;
@@ -51,6 +53,12 @@ public class Room {
 	}
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+	public boolean isAvailable() {
+		return available;
+	}
+	public void setAvailable(boolean available) {
+		this.available = available;
 	}
 
 
