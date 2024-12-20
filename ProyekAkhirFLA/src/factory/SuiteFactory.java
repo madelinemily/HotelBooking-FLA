@@ -1,7 +1,6 @@
 package factory;
 
 import model.Room;
-import model.SuiteRoom;
 import payment.Cash;
 
 public class SuiteFactory extends RoomFactory{
@@ -16,6 +15,6 @@ public class SuiteFactory extends RoomFactory{
 		return null;
 	}
 
-	
+
 
 }

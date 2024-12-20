@@ -1,6 +1,6 @@
 package payment;
 
-public class DigitalWallet {
+public class DigitalWallet implements Payment{
 	private double price;
 	public DigitalWallet(double price) {
 		// TODO Auto-generated constructor stub
@@ -12,6 +12,11 @@ public class DigitalWallet {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
+	@Override
+	public void processPayment(double amount) {
+		// TODO Auto-generated method stub
+		System.out.println("Processing digital wallet payment of " + amount);
+	}
+
 
 }

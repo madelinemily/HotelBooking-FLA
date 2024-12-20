@@ -52,6 +52,6 @@ public class Room {
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
 	}
-	
+
 
 }

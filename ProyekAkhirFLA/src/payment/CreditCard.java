@@ -1,6 +1,6 @@
 package payment;
 
-public class CreditCard {
+public class CreditCard implements Payment{
 	private double price;
 	public CreditCard(double price) {
 		// TODO Auto-generated constructor stub
@@ -12,6 +12,11 @@ public class CreditCard {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
+	@Override
+	public void processPayment(double amount) {
+		// TODO Auto-generated method stub
+		System.out.println("Processing credit card payment of " + amount);
+	}
+
 
 }
