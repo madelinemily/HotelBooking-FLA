@@ -13,9 +13,10 @@ public class CreditCard implements Payment{
 		this.price = price;
 	}
 	@Override
-	public void processPayment(double amount) {
+	public boolean processPayment(double amount) {
 		// TODO Auto-generated method stub
 		System.out.println("Processing credit card payment of " + amount);
+		return true;
 	}
 
 

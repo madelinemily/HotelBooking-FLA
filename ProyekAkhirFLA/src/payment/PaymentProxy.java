@@ -11,14 +11,15 @@ public class PaymentProxy implements Payment{
     }
 
     @Override
-    public void processPayment(double amount){
+    public boolean processPayment(double amount){
         System.out.println("Verifying payment...");
         if (isValid()) {
             double finalAmount = calculateTax(amount);
             System.out.println("Final amount after tax: " + finalAmount);
-            payment.processPayment(finalAmount);
+            return payment.processPayment(finalAmount);
         } else {
             System.out.println("Payment verification failed");
+            return false;
         }
     }
 

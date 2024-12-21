@@ -10,10 +10,10 @@ import payment.DigitalWallet;
 import payment.Payment;
 import payment.PaymentProxy;
 
-public class Booking {
+public class BookingService {
 	Scanner scan = new Scanner(System.in);
 
-	private List<String> bookings = new ArrayList<>();
+	private List<BookingEntry> bookings = new ArrayList<>();
 
     public void bookRoom(User user, Room room) {
         if(user == null || room == null) {
@@ -26,15 +26,17 @@ public class Booking {
            return;
         }
 
-        bookings.add("Booking: User : " + user.getName() + ", Room : " + room.getType());
+        BookingEntry booking = new BookingEntry(user, room, "Pending");
+        bookings.add(booking);
+        user.addBooking(booking);
         room.bookRoom();
         room.setAvailable(false);
         System.out.println("Booking successful for user: " + user.getName() + " in room: " + room.getType());
 
-        selectPaymentMethod(user, room.getPrice(), room);
+        selectPaymentMethod(user, room.getPrice(), booking);
     }
 
-    public void selectPaymentMethod(User user, double amount, Room room) {
+    public void selectPaymentMethod(User user, double amount, BookingEntry booking) {
         if(!user.getRole().equals("Registrant")) {
            System.out.println("Payment failed. Only registrant can make payments");
            return;
@@ -64,9 +66,15 @@ public class Booking {
                 return;
         }
 
-        payment.processPayment(amount);
-        System.out.println("Payment successful for user: " + user.getName() + " with amount: " + amount);
-        room.lockRoom();
+        if(payment.processPayment(amount)) {
+           System.out.println("Payment successful for user: " + user.getName() + " with amount: " + amount);
+           booking.setPaymentStatus("Paid");
+           booking.getRoom().lockRoom();
+        } 
+        else{
+           System.out.println("Payment failed");
+           booking.setPaymentStatus("Failed");
+        }
     }
 
     public void showBookings() {
@@ -76,7 +84,7 @@ public class Booking {
         }
 
         System.out.println("Current bookings:");
-        for(String booking : bookings) {
+        for(BookingEntry booking : bookings) {
             System.out.println(booking);
         }
     }

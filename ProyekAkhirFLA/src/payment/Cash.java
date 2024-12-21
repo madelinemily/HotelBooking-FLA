@@ -14,9 +14,10 @@ public class Cash implements Payment{
 		this.price = price;
 	}
 	@Override
-	public void processPayment(double amount) {
+	public boolean processPayment(double amount) {
 		// TODO Auto-generated method stub
 		System.out.println("Processing cash payment of " + amount);
+		return true;
 	}
 
 

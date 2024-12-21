@@ -13,9 +13,10 @@ public class DigitalWallet implements Payment{
 		this.price = price;
 	}
 	@Override
-	public void processPayment(double amount) {
+	public boolean processPayment(double amount) {
 		// TODO Auto-generated method stub
 		System.out.println("Processing digital wallet payment of " + amount);
+		return true;
 	}
 
 

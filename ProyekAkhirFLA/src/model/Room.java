@@ -21,6 +21,7 @@ public class Room {
 		this.maxOccupancy = maxOccupancy;
 		this.price = price;
 		this.paymentType = paymentType;
+		this.available = true;
 		this.state = new AvailableState();
 	}
 	public String getType() {
@@ -80,6 +81,9 @@ public class Room {
     public void lockRoom() {
         state.lock(this);
     }
-
-
+    
+    @Override
+    public String toString() {
+        return "Room with type: " + type + ", name: " + name + ", bedType: " + bedType + ", maxOccupancy: " + maxOccupancy + ", price: " + price + " and " + state.toString();
+    }
 }
