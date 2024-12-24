@@ -22,7 +22,7 @@ public class Main {
 			case 1:
 				database.showAvailableRooms();
 				BookingService bookingSytem = new BookingService();
-				System.out.println("Enter your number hotel that you want to book: ");
+				System.out.print("Enter your number hotel that you want to book: ");
 				int option = sc.nextInt()-1;sc.nextLine();
 				Room roomToBook = database.getAvailableRooms().get(option);
 				bookingSytem.bookRoom(user, roomToBook);

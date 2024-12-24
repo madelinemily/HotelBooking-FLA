@@ -46,6 +46,7 @@ public class BookingService {
         System.out.println("1. Cash");
         System.out.println("2. Credit Card");
         System.out.println("3. Digital Wallet");
+        System.out.print(">> ");
 
         int choice = scan.nextInt();
 
