@@ -59,6 +59,7 @@ public class Main {
 					MenuAfterRegister(newUser);
 				}else {
 					System.out.println("Back to register page");
+					System.out.print("Press Enter to Continue");sc.nextLine();
 				}
 				break;
 			case 2:
