@@ -9,29 +9,34 @@ import singleton.Database;
 
 public class Main {
 	Database database = Database.getDatabaseInstances();
+	BookingService bookingSystem;
 	Scanner sc = new Scanner(System.in);
 	public void MenuAfterRegister(User user) {
 		while(true) {
 			System.out.println("Hotel Booking System");
 			System.out.println("1. Book Available Room");
 			System.out.println("2. See History Booking");
-			System.out.println("3. Back to register page");
+			System.out.println("3. Checkout Booking");
+            System.out.println("4. Back to register page");
 			System.out.print(">> ");
 			int choice = sc.nextInt();sc.nextLine();
 			switch (choice) {
 			case 1:
 				database.showAvailableRooms();
-				BookingService bookingSytem = new BookingService();
+				bookingSystem = new BookingService();
 				System.out.print("Enter your number hotel that you want to book: ");
 				int option = sc.nextInt()-1;sc.nextLine();
 				Room roomToBook = database.getAvailableRooms().get(option);
-				bookingSytem.bookRoom(user, roomToBook);
+				bookingSystem.bookRoom(user, roomToBook);
 				break;
 			case 2:
 				System.out.println("List Booking: ");
 				user.showBookings();
 				break;
 			case 3:
+				bookingSystem.checkout(user);
+                break;
+			case 4:
 				return;
 			}
 		}

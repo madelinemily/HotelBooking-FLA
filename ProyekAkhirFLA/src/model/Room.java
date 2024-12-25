@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import state.AvailableState;
 import state.State;
 
@@ -12,17 +15,33 @@ public class Room {
 	private String paymentType;
 	private boolean available;
 	private State state;
+	private List<String> addOns;
+    private double addOnPrice;
 
-	public Room(String type, String name, String bedType, int maxOccupancy, double price, String paymentType) {
-		super();
-		this.type = type;
-		this.name = name;
-		this.bedType = bedType;
-		this.maxOccupancy = maxOccupancy;
-		this.price = price;
-		this.paymentType = paymentType;
-		this.available = true;
-		this.state = new AvailableState();
+    public Room(String type, String name, String bedType, int maxOccupancy, double price, String paymentType) {
+        super();
+        this.type = type;
+        this.name = name;
+        this.bedType = bedType;
+        this.maxOccupancy = maxOccupancy;
+        this.price = price;
+        this.paymentType = paymentType;
+        this.available = true;
+        this.state = new AvailableState();
+        this.addOns = new ArrayList<>();
+        this.addOnPrice = 0.0;
+    }
+	public List<String> getAddOns() {
+		return addOns;
+	}
+	public void setAddOns(List<String> addOns) {
+		this.addOns = addOns;
+	}
+	public double getAddOnPrice() {
+		return addOnPrice;
+	}
+	public void setAddOnPrice(double addOnPrice) {
+		this.addOnPrice = addOnPrice;
 	}
 	public String getType() {
 		return type;
@@ -49,8 +68,8 @@ public class Room {
 		this.maxOccupancy = maxOccupancy;
 	}
 	public double getPrice() {
-		return price;
-	}
+        return price + addOnPrice; 
+    }
 	public void setPrice(double price) {
 		this.price = price;
 	}
@@ -80,6 +99,11 @@ public class Room {
     }
     public void lockRoom() {
         state.lock(this);
+    }
+    
+    public void addAddOn(String addOn, double price) {
+        addOns.add(addOn);
+        this.addOnPrice += price;
     }
     
     @Override

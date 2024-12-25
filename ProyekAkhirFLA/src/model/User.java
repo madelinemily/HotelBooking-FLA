@@ -55,5 +55,15 @@ public class User {
            System.out.println(booking);
         }
     }
+    
+    public void removeBooking(BookingEntry booking) {
+        if(bookings.contains(booking)) {
+           bookings.remove(booking);
+           System.out.println("Booking removed successfully for room: " + booking.getRoom().getType());
+        } 
+        else{
+           System.out.println("Booking not found.");
+        }
+    }
 }
 

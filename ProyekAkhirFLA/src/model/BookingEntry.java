@@ -1,14 +1,46 @@
 package model;
 
+import java.time.LocalDate;
+
 public class BookingEntry {
     private User user;
     private Room room;
     private String paymentStatus; 
+    private LocalDate checkInDate;
+    public LocalDate getCheckInDate() {
+		return checkInDate;
+	}
 
-    public BookingEntry(User user, Room room, String paymentStatus) {
+	public void setCheckInDate(LocalDate checkInDate) {
+		this.checkInDate = checkInDate;
+	}
+
+	public LocalDate getCheckOutDate() {
+		return checkOutDate;
+	}
+
+	public void setCheckOutDate(LocalDate checkOutDate) {
+		this.checkOutDate = checkOutDate;
+	}
+
+	public boolean isCheckedOut() {
+		return isCheckedOut;
+	}
+
+	public void setCheckedOut(boolean isCheckedOut) {
+		this.isCheckedOut = isCheckedOut;
+	}
+
+	private LocalDate checkOutDate;
+    private boolean isCheckedOut;
+
+    public BookingEntry(User user, Room room, String paymentStatus, LocalDate checkInDate, LocalDate checkOutDate) {
         this.user = user;
         this.room = room;
         this.paymentStatus = paymentStatus;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.isCheckedOut = false; 
     }
 
     public User getUser() {
@@ -23,9 +55,23 @@ public class BookingEntry {
     public void setPaymentStatus(String paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
+    
+    public void checkOut() {
+        this.isCheckedOut = true;
+        this.room.setAvailable(true);
+    }
+
+    public double calculateFine(LocalDate currentDate) {
+        if(currentDate.isAfter(checkOutDate) && !isCheckedOut) {
+           long daysOverdue = currentDate.toEpochDay() - checkOutDate.toEpochDay();
+           return daysOverdue * 50.0; 
+        }
+        
+        return 0.0;
+    }
 
     @Override
     public String toString() {
-        return "Booking entry for user: " + user.getName() + ", room: " + room.getType() + ", paymentStatus: " + paymentStatus;
+        return "Booking entry for user: " + user.getName() + ", room: " + room.getType() + ", paymentStatus: " + paymentStatus + ", check-in: " + checkInDate + ", check-out: " + checkOutDate + ", is check-out: " + isCheckedOut;
     }
 }
