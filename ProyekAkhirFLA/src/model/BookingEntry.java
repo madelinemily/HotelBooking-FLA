@@ -70,8 +70,29 @@ public class BookingEntry {
         return 0.0;
     }
 
-    @Override
+    public BookingEntry() {
+		
+	}
+
+	@Override
     public String toString() {
-        return "Booking entry for user: " + user.getName() + ", room: " + room.getType() + ", paymentStatus: " + paymentStatus + ", check-in: " + checkInDate + ", check-out: " + checkOutDate + ", is check-out: " + isCheckedOut;
+        return "Booking entry for user: " + user.getName() +
+               ", room: {" +
+               "type: " + room.getType() +
+               ", name: " + room.getName() +
+               ", bedType: " + room.getBedType() +
+               ", maxOccupancy: " + room.getMaxOccupancy() +
+               ", price: " + room.getPrice() +
+               ", paymentType: " + room.getPaymentType() +
+               ", available: " + room.isAvailable() +
+               ", state: " + room.getState() +
+               ", addOns: " + room.getAddOns() +
+               ", addOnPrice: " + room.getAddOnPrice() +
+               "}" +
+               ", paymentStatus: " + paymentStatus +
+               ", check-in: " + checkInDate +
+               ", check-out: " + checkOutDate +
+               ", is check-out: " + isCheckedOut;
     }
+
 }

@@ -5,57 +5,38 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Room;
 import state.AvailableState;
 
-public class Database implements IDatabase {
-    private static Database dbInstance = null;
-    private ArrayList<Room> listRoom = new ArrayList<>();
+public class DatabaseProxy implements IDatabase {
+    private Database realDatabase;
+    private List<Room> cachedAvailableRooms;
 
-    public Database() {
-        loadRoomsFromFile("rooms.txt");
-    }
-
-    public static Database getDatabaseInstances() {
-        if (dbInstance == null) {
-            dbInstance = new Database();
-        }
-        return dbInstance;
+    public DatabaseProxy() {
+        this.realDatabase = Database.getDatabaseInstances(); 
+        this.cachedAvailableRooms = new ArrayList<>();
     }
 
     @Override
     public List<Room> getAvailableRooms() {
-        List<Room> availableRooms = new ArrayList<>();
-        for (Room room : listRoom) {
-            if (room.isAvailable()) {
-                availableRooms.add(room);
-            }
-        }
-        return availableRooms;
-    }
-
-    @Override
-    public void showAvailableRooms() {
-        List<Room> availableRooms = getAvailableRooms();
-        if (availableRooms.isEmpty()) {
-            System.out.println("No available rooms");
+    	cachedAvailableRooms.clear();
+        if (cachedAvailableRooms.isEmpty()) {
+            System.out.println("Fetching data from rooms.txt...");
+            loadRoomsFromFile();
         } else {
-            System.out.println("Available rooms:");
-            for (Room room : availableRooms) {
-                System.out.println(room);
-            }
+            System.out.println("Fetching data from Cache...");
         }
+        return cachedAvailableRooms;
     }
 
-    private void loadRoomsFromFile(String fileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+    private void loadRoomsFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("rooms.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("Available: true")) {
                     Room room = parseRoomData(line);
                     if (room != null) {
-                        listRoom.add(room);  
+                        cachedAvailableRooms.add(room);
                     }
                 }
             }
@@ -82,7 +63,7 @@ public class Database implements IDatabase {
             
             Room room = new Room(roomType, roomName, bedType, maxOccupancy, price, paymentType);
             if(state.equals("Room is available for booking")) {
-                room.setState(new AvailableState());
+            	room.setState(new AvailableState());
             }
             room.setAvailable(available);
 
@@ -91,5 +72,23 @@ public class Database implements IDatabase {
             System.err.println("Error parsing room data: " + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public void showAvailableRooms() {
+        List<Room> availableRooms = getAvailableRooms();
+        if (availableRooms.isEmpty()) {
+            System.out.println("No available rooms");
+        } else {
+            System.out.println("Available rooms (from rooms.txt):");
+            for (Room room : availableRooms) {
+                System.out.println(room);
+            }
+        }
+    }
+
+    public void clearCache() {
+        cachedAvailableRooms.clear();
+        System.out.println("Cache cleared.");
     }
 }

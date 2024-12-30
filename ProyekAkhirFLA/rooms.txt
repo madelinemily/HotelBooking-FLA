@@ -1,0 +1,3 @@
+RoomType: Deluxe, RoomName: Deluxe Room, BedType: King, MaxOccupancy: 2, Price: 500.0, PaymentType: Credit Card, Available: false, State: This room is now locked
+RoomType: Suite, RoomName: Suite Room, BedType: Queen, MaxOccupancy: 4, Price: 1000.0, PaymentType: Digital Wallet, Available: true, State: Room is available for booking
+RoomType: Standard, RoomName: Standard Room, BedType: Single, MaxOccupancy: 1, Price: 300.0, PaymentType: Cash, Available: true, State: Room is available for booking
