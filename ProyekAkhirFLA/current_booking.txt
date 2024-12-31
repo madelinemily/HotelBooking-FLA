@@ -1,0 +1,1 @@
+Booking entry for user: Admin, room: {type: Deluxe, name: Deluxe Room, bedType: King, maxOccupancy: 2, price: 500.0, paymentType: Credit Card, available: false, state: This room is booked, addOns: [], addOnPrice: 0.0}, paymentStatus: Pending, check-in: 2024-12-30, check-out: 2024-12-31, is check-out: false
