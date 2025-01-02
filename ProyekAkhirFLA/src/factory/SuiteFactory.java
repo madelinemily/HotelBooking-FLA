@@ -1,6 +1,7 @@
 package factory;
 
 import model.Room;
+import model.SuiteRoom;
 import payment.Cash;
 
 public class SuiteFactory extends RoomFactory{
@@ -12,7 +13,7 @@ public class SuiteFactory extends RoomFactory{
 	@Override
 	public Room createRoom(String type, String name, String bedType, int maxOccupancy, Cash cash, String paymentTpe) {
 		// TODO Auto-generated method stub
-		return null;
+		return new SuiteRoom(type, name, bedType, maxOccupancy, cash, paymentTpe);
 	}
 
 

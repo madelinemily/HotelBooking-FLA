@@ -14,42 +14,52 @@ public class Main {
     BookingService bookingSystem = new BookingService();
     Scanner sc = new Scanner(System.in);
 
-    public void MenuAfterRegister(User user) {
-    	bookingSystem.readRoomsFromFile();
-        while(true) {
-            System.out.println("Hotel Booking System");
-            System.out.println("1. Book Available Room");
-            System.out.println("2. See Current Booking");
-            System.out.println("3. Checkout Booking");
-            System.out.println("4. Back to register page");
-            System.out.println("5. See History Booking");
-            System.out.print(">> ");
-            int choice = sc.nextInt();
-            sc.nextLine();
-            switch (choice) {
-                case 1:
-                    database.showAvailableRooms();
-                    System.out.print("Enter your number hotel that you want to book: ");
-                    int option = sc.nextInt() - 1;
-                    sc.nextLine();
-                    Room roomToBook = database.getAvailableRooms().get(option);
-                    bookingSystem.bookRoom(user, roomToBook);
-                    break;
-                case 2:
-                    System.out.println("List Booking: ");
-                    bookingSystem.showCurrentBookings(user);
-                    break;
-                case 3:
-                    bookingSystem.checkout(user);
-                    break;
-                case 4:
-                    return;
-                case 5:
-                	bookingSystem.showBookingHistory(user);
-                	break;
-            }
-        }
-    }
+
+	public void MenuAfterRegister(User user) {
+	    bookingSystem.readRoomsFromFile();
+	    while (true) {
+	        System.out.println("Hotel Booking System");
+	        System.out.println("1. Book Available Room");
+	        System.out.println("2. See Current Booking");
+	        System.out.println("3. Checkout Booking");
+	        System.out.println("4. Back to register page");
+	        System.out.println("5. See History Booking");
+	        System.out.print(">> ");
+	        int choice = sc.nextInt();
+	        sc.nextLine();
+	        
+	        switch (choice) {
+	            case 1:
+	                database.showAvailableRooms();
+	                System.out.print("Enter your number hotel that you want to book: ");
+	                int option = sc.nextInt() - 1;
+	                sc.nextLine();
+	                
+	                if (option < 0 || option >= database.getAvailableRooms().size()) {
+	                    System.out.println("Invalid input. Please enter a number between 1 and " + database.getAvailableRooms().size());
+	                    break;
+	                }
+	                
+	                Room roomToBook = database.getAvailableRooms().get(option);
+	                bookingSystem.bookRoom(user, roomToBook);
+	                break;
+	            case 2:
+	                System.out.println("List Booking: ");
+	                bookingSystem.showCurrentBookings(user);
+	                break;
+	            case 3:
+	                bookingSystem.checkout(user);
+	                break;
+	            case 4:
+	                return;
+	            case 5:
+	                bookingSystem.showBookingHistory(user);
+	                break;
+	            default:
+	                System.out.println("Invalid choice. Please select a valid option.");
+	        }
+	    }
+	}
 
     public void MenuBeforeLogin() {
         User.loadUsers();
