@@ -45,7 +45,6 @@ public class BookingService {
         
         System.out.println("Do you want to add extra services? [Yes/No]");
         System.out.print(">> ");
-        scan.nextLine();
         String extraChoice = scan.nextLine().toLowerCase();
         while(extraChoice.equals("yes")) {
            System.out.println("Available add-ons:");
@@ -89,6 +88,8 @@ public class BookingService {
 //        user.addBooking(booking);
         room.bookRoom();
         room.setAvailable(false);
+        booking.setAddOns(room.getAddOns());
+        booking.setAddOnPrice(room.getAddOnPrice());
         updateRoomStatus(room);
 //        saveBookingHistory();
         saveCurrentBooking(booking);
@@ -364,16 +365,48 @@ public class BookingService {
             System.out.println("Error saving booking to history: " + e.getMessage());
         }
     }
+    
+    private boolean isSameBooking(String line, BookingEntry booking) {
+        try {
+            String userNameFromFile = line.split(", room:")[0].split(": ")[1].trim();
+
+            if (!userNameFromFile.equals(booking.getUser().getName())) {
+                return false;
+            }
+
+            int roomStart = line.indexOf("room: {") + 6;
+            int roomEnd = line.indexOf("}, paymentStatus");
+            String roomDetails = line.substring(roomStart, roomEnd).trim();
+
+            String roomType = extractField(roomDetails, "type: ");
+            String roomName = extractField(roomDetails, "name: ");
+
+            String checkInDate = line.split("check-in: ")[1].split(", check-out")[0].trim();
+            String checkOutDate = line.split("check-out: ")[1].split(",")[0].trim();
+
+            return roomType.equals(booking.getRoom().getType()) &&
+                   roomName.equals(booking.getRoom().getName()) &&
+                   checkInDate.equals(booking.getCheckInDate().toString()) &&
+                   checkOutDate.equals(booking.getCheckOutDate().toString());
+        } catch (Exception e) {
+            System.out.println("Error in isSameBooking: " + e.getMessage());
+            return false;
+        }
+    }
+    
+
 
     private void removeFromCurrentBooking(BookingEntry booking) {
         try {
             List<String> lines = new ArrayList<>();
             BufferedReader reader = new BufferedReader(new FileReader("current_booking.txt"));
             String line;
+
             while ((line = reader.readLine()) != null) {
-                if (!line.contains(booking.getUser().getName())) {
+
+                if (!isSameBooking(line, booking)) {
                     lines.add(line);
-                }
+                } 
             }
             reader.close();
             BufferedWriter writer = new BufferedWriter(new FileWriter("current_booking.txt"));
@@ -388,71 +421,86 @@ public class BookingService {
 
     private List<BookingEntry> loadUserBookings(String username, String filename) {
         List<BookingEntry> bookings = new ArrayList<>();
-
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(", ");
-                String userNameFromFile = parts[0].split(": ")[1].trim();
-
-                if (userNameFromFile.equals(username)) {
-                    String roomType = parts[1].split(": ")[1].trim();
-                    String roomName = parts[2].split(": ")[1].trim();
-                    String bedType = parts[3].split(": ")[1].trim();
-
-                    int maxOccupancy;
-                    try {
-                        maxOccupancy = Integer.parseInt(parts[4].split(": ")[1].trim());
-                    } catch (NumberFormatException e) {
-                        maxOccupancy = 1; 
+                try {
+    
+                    String userNameFromFile = line.split(", room:")[0].split(": ")[1].trim();
+                    if (!userNameFromFile.equals(username)) {
+                        System.out.println("Skipping booking for user: " + userNameFromFile);
+                        continue;
                     }
-
-                    double price;
-                    try {
-                        price = Double.parseDouble(parts[5].split(": ")[1].trim());
-                    } catch (NumberFormatException e) {
-                        price = 0.0;
-                    }
-
-                    String paymentType = parts[6].split(": ")[1].trim();
-                    boolean available = Boolean.parseBoolean(parts[7].split(": ")[1].trim());
-                    String state = parts[8].split(": ")[1].trim();
-                    List<String> addOns = Arrays.asList(parts[9].split(": ")[1].replace("[", "").replace("]", "").split(", "));
-
-                    double addOnPrice;
-                    try {
-                        addOnPrice = Double.parseDouble(parts[10].split(": ")[1].trim());
-                    } catch (NumberFormatException e) {
-                        addOnPrice = 0.0; 
-                    }
-
-                    String paymentStatus = parts[11].split(": ")[1].trim();
-                    LocalDate checkInDate = LocalDate.parse(parts[12].split(": ")[1].trim());
-                    LocalDate checkOutDate = LocalDate.parse(parts[13].split(": ")[1].trim());
-                    boolean isCheckedOut = Boolean.parseBoolean(parts[14].split(": ")[1].trim());
-
-                    RoomFactory factory = RoomFactory.createFactory(roomType);
-                    Room room = null;
-                    if (factory != null) {
-                        room = factory.createRoom(roomType, roomName, bedType, maxOccupancy, new Cash(price), paymentType);
+    
+                    int roomStart = line.indexOf("room: {") + 6;
+                    int roomEnd = line.indexOf("}, paymentStatus");
+                    String roomDetails = line.substring(roomStart, roomEnd).trim();
+    
+                    String roomType = extractField(roomDetails, "type: ");
+                    String roomName = extractField(roomDetails, "name: ");
+                    String bedType = extractField(roomDetails, "bedType: ");
+                    int maxOccupancy = Integer.parseInt(extractField(roomDetails, "maxOccupancy: "));
+                    double price = Double.parseDouble(extractField(roomDetails, "price: "));
+                    String paymentType = extractField(roomDetails, "paymentType: ");
+                    boolean available = Boolean.parseBoolean(extractField(roomDetails, "available: "));
+                    String state = extractField(roomDetails, "state: ");
+    
+                    List<String> addOns;
+                    if (roomDetails.contains("addOns: [") && roomDetails.contains("], addOnPrice")) {
+                        int addOnsStart = roomDetails.indexOf("addOns: [") + 9;
+                        int addOnsEnd = roomDetails.indexOf("], addOnPrice");
+                        String addOnsField = roomDetails.substring(addOnsStart, addOnsEnd).trim();
+                        addOns = addOnsField.isEmpty() ? new ArrayList<>() : Arrays.asList(addOnsField.split(", "));
                     } else {
-                        System.out.println("Unknown room type: " + roomType);
+                        addOns = new ArrayList<>();
                     }
-                    
+    
+                    String addOnPriceString = line.split("addOnPrice: ")[1].split(",")[0].trim();
+                    double addOnPrice = Double.parseDouble(addOnPriceString.replace("}", "").trim());
+    
+                    String paymentStatus = line.split("paymentStatus: ")[1].split(", check-in")[0].trim();
+                    LocalDate checkInDate = LocalDate.parse(line.split("check-in: ")[1].split(", check-out")[0].trim());
+                    String checkOutString = line.split("check-out: ")[1].split(",")[0].trim();
+                    LocalDate checkOutDate = LocalDate.parse(checkOutString);
+                    boolean isCheckedOut = Boolean.parseBoolean(line.split("is check-out: ")[1].trim());
+    
+                    RoomFactory factory = RoomFactory.createFactory(roomType);
+                    Room room = factory != null ? factory.createRoom(roomType, roomName, bedType, maxOccupancy, new Cash(price), paymentType) : null;
+    
+                    if (room == null) {
+                        System.out.println("Skipping unknown room type: " + roomType);
+                        continue;
+                    }
+    
                     User user = new User(userNameFromFile);
                     BookingEntry booking = new BookingEntry(user, room, paymentStatus, checkInDate, checkOutDate);
                     booking.setCheckedOut(isCheckedOut);
-
+//                    addOns.add("Hello");
+                    booking.setAddOns(addOns);
+                    booking.setAddOnPrice(addOnPrice);
+    
                     bookings.add(booking);
+                } catch (Exception e) {
+                    System.out.println("Error processing line: " + line + " - " + e.getMessage());
                 }
             }
         } catch (IOException e) {
             System.out.println("Error reading booking data: " + e.getMessage());
         }
-
-
+    
         return bookings;
     }
+    
+    private String extractField(String details, String field) {
+        int start = details.indexOf(field) + field.length();
+        int end = details.indexOf(",", start);
+        if (end == -1) { 
+            end = details.length();
+        }
+        return details.substring(start, end).trim();
+    }
+    
 
 //    private void removeBookingFromFile(String username, BookingEntry bookingToRemove) {
 //        List<String> allBookings = new ArrayList<>();
