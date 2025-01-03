@@ -3,6 +3,10 @@ package state;
 import model.Room;
 
 public class LockedState implements State{
+	
+	public LockedState() {
+		
+	}
 
 	@Override
 	public void book(Room room) {

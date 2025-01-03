@@ -20,6 +20,9 @@ import payment.CreditCard;
 import payment.DigitalWallet;
 import payment.Payment;
 import payment.PaymentProxy;
+import state.AvailableState;
+import state.BookedState;
+import state.LockedState;
 
 public class BookingService {
 	Scanner scan = new Scanner(System.in);
@@ -42,6 +45,7 @@ public class BookingService {
         
         System.out.println("Do you want to add extra services? [Yes/No]");
         System.out.print(">> ");
+        scan.nextLine();
         String extraChoice = scan.nextLine().toLowerCase();
         while(extraChoice.equals("yes")) {
            System.out.println("Available add-ons:");
@@ -141,10 +145,21 @@ public class BookingService {
                 double price = Double.parseDouble(parts[4].split(": ")[1]);
                 String paymentType = parts[5].split(": ")[1];
                 boolean available = Boolean.parseBoolean(parts[6].split(": ")[1]);
+                String state = parts[7].split(": ")[1];
                 
                 RoomFactory factory = RoomFactory.createFactory(type);
                 if (factory != null) {
                     Room room = factory.createRoom(type, name, bedType, maxOccupancy, new Cash(price), paymentType);
+                    room.setAvailable(available);
+                    if(state.equals("Room is available for booking")) {
+                    	room.setState(new AvailableState());
+                    }
+                    else if(state.equals("This room is booked")) {
+                    	room.setState(new BookedState());
+                    }
+                    else if(state.equals("This room is now locked")) {
+                    	room.setState(new LockedState());
+                    }
                     rooms.add(room);
                 } else {
                     System.out.println("Unknown room type: " + type);

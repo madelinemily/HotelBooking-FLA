@@ -3,6 +3,10 @@ package state;
 import model.Room;
 
 public class AvailableState implements State{
+	
+	public AvailableState() {
+		
+	}
 
 	@Override
 	public void book(Room room) {
