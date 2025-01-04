@@ -269,7 +269,7 @@ public class BookingService {
         }
 
         if(payment.processPayment(amount)) {
-           System.out.println("Payment successful for user: " + user.getName() + " with amount: " + amount);
+           System.out.println("Payment successful for user: " + user.getName());
            booking.setPaymentStatus("Paid");
            booking.getRoom().lockRoom();
            updateRoomStatusToLocked(booking.getRoom());
